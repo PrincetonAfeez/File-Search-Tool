@@ -1,0 +1,5 @@
+name:*.py
+name:*.py AND contains:TODO
+name:*.py AND size:>1KB AND NOT path:*/tests/*
+(ext:py OR ext:md) AND modified:within:7d
+
