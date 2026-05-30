@@ -6,6 +6,7 @@ from pathlib import Path
 import pytest
 
 from file_search_tool.cli import (
+    _error_exit_code,
     _needs_deferred_limit,
     _print_warnings,
     _should_buffer_plain_output,
@@ -13,6 +14,7 @@ from file_search_tool.cli import (
     build_parser,
     run,
 )
+from file_search_tool.errors import CLIError, ContentSearchError, InvalidFilterError, TraversalError
 from file_search_tool.models import CliDisplayOptions, SearchOptions, SearchResult
 from file_search_tool.search import count_unique_matched_files
 
@@ -102,11 +104,19 @@ def test_tree_format_with_no_matches_prints_nothing(tmp_path: Path):
     assert stdout == ""
 
 
-def test_run_returns_two_for_traversal_error(tmp_path: Path):
+def test_run_returns_three_for_traversal_error(tmp_path: Path):
     code, _, stderr = invoke([str(tmp_path / "missing"), "--name", "*.txt"])
 
-    assert code == 2
+    assert code == 3
     assert "root path does not exist" in stderr
+
+
+def test_error_exit_code_distinguishes_input_from_runtime_failures():
+    assert _error_exit_code(CLIError("bad flag")) == 2
+    assert _error_exit_code(InvalidFilterError("name pattern cannot be empty")) == 2
+    assert _error_exit_code(TraversalError("root path does not exist: /missing")) == 3
+    assert _error_exit_code(ContentSearchError("binary file not searchable: data.bin")) == 3
+    assert _error_exit_code(ContentSearchError("content search pattern cannot be empty")) == 2
 
 
 def test_build_parser_exposes_all_documented_flags():
