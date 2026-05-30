@@ -37,10 +37,18 @@ Runtime only (no test tools):
 python -m pip install -e .
 ```
 
-Or install test dependencies from the lock-style list:
+Reproducible development installs (pinned dev dependencies):
+
+```text
+python -m pip install -r requirements-dev.lock
+python -m pip install -e .
+```
+
+Or install loose dev lower bounds from `requirements.txt` when you do not need exact pins:
 
 ```text
 python -m pip install -r requirements.txt
+python -m pip install -e .
 ```
 
 ## Development
@@ -59,8 +67,15 @@ mypy file_search_tool
 mypy tests --disable-error-code=no-untyped-def --disable-error-code=no-untyped-call
 ```
 
-Current quality bar: **99% library coverage**, strict mypy on `file_search_tool`, and
-ruff on library + tests (see the CI badge above for test status).
+Regenerate the pinned dev lockfile after changing `[project.optional-dependencies].dev`:
+
+```text
+pip-compile pyproject.toml --extra dev -o requirements-dev.lock
+```
+
+Current quality bar: **99% library coverage** (enforced via `fail_under` in
+`pyproject.toml`), strict mypy on `file_search_tool`, and ruff on library +
+tests (see the CI badge above for test status).
 
 ## Project Layout
 
@@ -128,13 +143,16 @@ file-search . --contains TODO --binary-error
 |------|---------|
 | 0 | One or more matched files were found |
 | 1 | Search completed successfully but found no matches |
-| 2 | Invalid input or another expected `FileSearchError` |
+| 2 | Invalid CLI, query, or filter input |
+| 3 | Expected runtime or search failure (for example missing root, unreadable tree, binary file with `--binary-error`) |
 
 Exit code `0`/`1` are based on matched **files**, not individual content lines.
 Both `main()` and `run()` return the same exit codes; `run()` also writes
-`query error:` / `error:` messages to stderr before returning `2`. Failures that
-originate inside a `--query` (including invalid `size:` and `modified:` values)
-use the `query error:` prefix; CLI-flag and traversal failures use `error:`.
+`query error:` / `error:` messages to stderr before returning `2` or `3`.
+Failures that originate inside a `--query` (including invalid `size:` and
+`modified:` values) use the `query error:` prefix; CLI-flag validation failures
+use `error:` with exit code `2`; traversal and content-search failures during
+the scan use `error:` with exit code `3`.
 
 JSON output always prints a valid array. When nothing matches, it prints `[]`
 and still returns exit code `1`.
@@ -144,6 +162,23 @@ and still returns exit code `1`.
 - **plain** — Streams lazily; best for large trees. With `--binary-error`, plain
   output is buffered so no partial results are printed if a binary file is hit.
 - **json** — Collects all matches into a JSON array first.
+
+### JSON result objects
+
+Each element of the JSON array is one `SearchResult` object with these fields:
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `path` | string | Absolute path to the matched entry |
+| `relative_path` | string | Path relative to the search root (`"."` for the root itself) |
+| `type` | string | `"file"`, `"dir"`, `"symlink"`, or `"other"` |
+| `size` | integer or null | Entry size in bytes when available |
+| `mtime` | number or null | Modification time as a Unix timestamp when available |
+| `match_kind` | string | `"path"` or `"content"` |
+| `line_number` | integer or null | 1-based line number for content matches |
+| `line_text` | string or null | Full matched line text for content matches |
+| `matched_text` | string or null | Matched substring for content matches |
+
 - **tree** — Groups matches by parent directory (flat grouped view, not a nested tree widget). Content matches render as `name:line: text`.
 
 Sorting (`--sort`) and non-plain formats collect matches before output. When
