@@ -133,12 +133,12 @@ def test_cli_exit_code_two_for_expected_errors(tmp_path: Path, monkeypatch, argv
     assert expected in stderr.getvalue()
 
 
-def test_cli_missing_root_returns_two(monkeypatch):
+def test_cli_missing_root_returns_three(monkeypatch):
     stderr = StringIO()
     monkeypatch.setattr(sys, "stderr", stderr)
     code = main(["/no/such/root/for/file-search", "--name", "*.py"])
 
-    assert code == 2
+    assert code == 3
     assert "root path does not exist" in stderr.getvalue()
 
 
@@ -158,7 +158,7 @@ def test_cli_binary_error_flag(tmp_path: Path, monkeypatch):
     monkeypatch.setattr(sys, "stderr", stderr)
     code = main([str(tmp_path), "--contains", "TODO", "--binary-error"])
 
-    assert code == 2
+    assert code == 3
     assert "binary file not searchable" in stderr.getvalue()
 
 
@@ -175,7 +175,7 @@ def test_binary_error_buffers_plain_output(tmp_path: Path):
 
     code, stdout, stderr = invoke([str(tmp_path), "--contains", "TODO", "--binary-error"])
 
-    assert code == 2
+    assert code == 3
     assert stdout == ""
     assert "binary file not searchable" in stderr
 
