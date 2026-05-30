@@ -1,0 +1,61 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/PrincetonAfeez/File-Search-Tool/schema/search-stats.schema.json",
+  "title": "SearchStats",
+  "description": "Counters describing what happened during a search.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "files_scanned",
+    "dirs_scanned",
+    "files_matched",
+    "content_matches",
+    "entries_skipped",
+    "permission_errors",
+    "binary_files_skipped",
+    "symlink_cycles_skipped",
+    "elapsed_seconds",
+    "stopped_early"
+  ],
+  "properties": {
+    "files_scanned": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "dirs_scanned": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "files_matched": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "content_matches": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "entries_skipped": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "permission_errors": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "binary_files_skipped": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "symlink_cycles_skipped": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "elapsed_seconds": {
+      "type": "number",
+      "minimum": 0
+    },
+    "stopped_early": {
+      "type": "boolean"
+    }
+  }
+}

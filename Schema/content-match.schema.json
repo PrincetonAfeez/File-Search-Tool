@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/PrincetonAfeez/File-Search-Tool/schema/content-match.schema.json",
+  "title": "ContentMatch",
+  "description": "One content-line match.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "line_number",
+    "line_text",
+    "matched_text"
+  ],
+  "properties": {
+    "line_number": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "line_text": {
+      "type": "string"
+    },
+    "matched_text": {
+      "type": "string"
+    }
+  }
+}

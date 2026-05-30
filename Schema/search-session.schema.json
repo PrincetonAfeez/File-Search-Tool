@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/PrincetonAfeez/File-Search-Tool/schema/search-session.schema.json",
+  "title": "SearchSession",
+  "description": "A search result stream plus mutable stats and warnings.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "results",
+    "stats",
+    "warnings"
+  ],
+  "properties": {
+    "results": {
+      "type": "array",
+      "items": {
+        "$ref": "search-result.schema.json"
+      }
+    },
+    "stats": {
+      "$ref": "search-stats.schema.json"
+    },
+    "warnings": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}

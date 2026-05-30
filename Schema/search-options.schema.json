@@ -1,0 +1,60 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/PrincetonAfeez/File-Search-Tool/schema/search-options.schema.json",
+  "title": "SearchOptions",
+  "description": "Library options controlling traversal and filtering.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "include_hidden": {
+      "type": "boolean",
+      "default": false
+    },
+    "follow_symlinks": {
+      "type": "boolean",
+      "default": false
+    },
+    "max_depth": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "minimum": 0,
+      "default": null
+    },
+    "exclude_patterns": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "case_sensitive": {
+      "type": "boolean",
+      "default": true
+    },
+    "content_case_sensitive": {
+      "type": [
+        "boolean",
+        "null"
+      ],
+      "default": null
+    },
+    "limit": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "minimum": 1,
+      "default": null
+    },
+    "binary_policy": {
+      "type": "string",
+      "enum": [
+        "skip",
+        "error"
+      ],
+      "default": "skip"
+    }
+  }
+}

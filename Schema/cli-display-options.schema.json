@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/PrincetonAfeez/File-Search-Tool/schema/cli-display-options.schema.json",
+  "title": "CliDisplayOptions",
+  "description": "CLI-only options for formatting, sorting, and diagnostics.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "sort_by": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "enum": [
+        "name",
+        "size",
+        "mtime",
+        null
+      ],
+      "default": null
+    },
+    "output_format": {
+      "type": "string",
+      "enum": [
+        "plain",
+        "tree",
+        "json"
+      ],
+      "default": "plain"
+    },
+    "show_summary": {
+      "type": "boolean",
+      "default": false
+    },
+    "verbose": {
+      "type": "boolean",
+      "default": false
+    }
+  }
+}

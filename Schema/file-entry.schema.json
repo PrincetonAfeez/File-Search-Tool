@@ -1,0 +1,56 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/PrincetonAfeez/File-Search-Tool/schema/file-entry.schema.json",
+  "title": "FileEntry",
+  "description": "One filesystem item discovered during traversal.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "path",
+    "root",
+    "relative_path",
+    "is_file",
+    "is_dir",
+    "is_symlink",
+    "size",
+    "mtime",
+    "depth"
+  ],
+  "properties": {
+    "path": {
+      "type": "string"
+    },
+    "root": {
+      "type": "string"
+    },
+    "relative_path": {
+      "type": "string"
+    },
+    "is_file": {
+      "type": "boolean"
+    },
+    "is_dir": {
+      "type": "boolean"
+    },
+    "is_symlink": {
+      "type": "boolean"
+    },
+    "size": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "minimum": 0
+    },
+    "mtime": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "depth": {
+      "type": "integer",
+      "minimum": 0
+    }
+  }
+}

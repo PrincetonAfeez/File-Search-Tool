@@ -1,0 +1,38 @@
+{
+  "name": "File Search Tool Schema Index",
+  "version": "0.1.0",
+  "schemas": [
+    {
+      "name": "SearchResult",
+      "file": "search-result.schema.json"
+    },
+    {
+      "name": "SearchResults",
+      "file": "search-results.schema.json"
+    },
+    {
+      "name": "SearchStats",
+      "file": "search-stats.schema.json"
+    },
+    {
+      "name": "FileEntry",
+      "file": "file-entry.schema.json"
+    },
+    {
+      "name": "SearchOptions",
+      "file": "search-options.schema.json"
+    },
+    {
+      "name": "CliDisplayOptions",
+      "file": "cli-display-options.schema.json"
+    },
+    {
+      "name": "ContentMatch",
+      "file": "content-match.schema.json"
+    },
+    {
+      "name": "SearchSession",
+      "file": "search-session.schema.json"
+    }
+  ]
+}

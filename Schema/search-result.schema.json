@@ -1,0 +1,137 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/PrincetonAfeez/File-Search-Tool/schema/search-result.schema.json",
+  "title": "SearchResult",
+  "description": "One search result emitted by the File Search Tool library or CLI JSON formatter.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "path",
+    "relative_path",
+    "type",
+    "size",
+    "mtime",
+    "match_kind",
+    "line_number",
+    "line_text",
+    "matched_text"
+  ],
+  "properties": {
+    "path": {
+      "type": "string",
+      "description": "Filesystem path for the matched entry."
+    },
+    "relative_path": {
+      "type": "string",
+      "description": "Path relative to the search root. The root itself is represented as '.'."
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "file",
+        "dir",
+        "symlink",
+        "other"
+      ],
+      "description": "Detected filesystem entry type."
+    },
+    "size": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "minimum": 0,
+      "description": "File size in bytes, or null when not applicable."
+    },
+    "mtime": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "description": "Modified-time Unix timestamp, or null when unavailable."
+    },
+    "match_kind": {
+      "type": "string",
+      "enum": [
+        "path",
+        "content"
+      ],
+      "description": "Whether the result came from path metadata or a content-line match."
+    },
+    "line_number": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "minimum": 1,
+      "description": "1-based matching line number for content matches."
+    },
+    "line_text": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "Full matching line text for content matches."
+    },
+    "matched_text": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "Matched substring for content matches."
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "match_kind": {
+            "const": "content"
+          }
+        },
+        "required": [
+          "match_kind"
+        ]
+      },
+      "then": {
+        "properties": {
+          "line_number": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "line_text": {
+            "type": "string"
+          },
+          "matched_text": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "match_kind": {
+            "const": "path"
+          }
+        },
+        "required": [
+          "match_kind"
+        ]
+      },
+      "then": {
+        "properties": {
+          "line_number": {
+            "type": "null"
+          },
+          "line_text": {
+            "type": "null"
+          },
+          "matched_text": {
+            "type": "null"
+          }
+        }
+      }
+    }
+  ]
+}
