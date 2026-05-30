@@ -9,7 +9,16 @@ from pathlib import Path
 import sys
 from typing import TextIO
 
-from file_search_tool.errors import FileSearchError, QuerySyntaxError
+from file_search_tool.diagnostics import emit_stderr, emit_warning
+from file_search_tool.errors import (
+    CLIError,
+    ContentSearchError,
+    FileSearchError,
+    InvalidDateExpression,
+    InvalidFilterError,
+    InvalidSizeExpression,
+    QuerySyntaxError,
+)
 from file_search_tool.formatters import json as json_formatter
 from file_search_tool.formatters import plain as plain_formatter
 from file_search_tool.formatters import tree as tree_formatter
@@ -104,7 +113,20 @@ def _apply_file_limit(results: list[SearchResult], limit: int | None) -> list[Se
 
 def _print_warnings(warnings: list[str], stderr: TextIO) -> None:
     for warning in warnings:
-        print(f"warning: {warning}", file=stderr)
+        emit_warning(warning, stderr)
+
+
+def _error_exit_code(exc: FileSearchError) -> int:
+    if isinstance(
+        exc,
+        QuerySyntaxError | CLIError | InvalidFilterError | InvalidSizeExpression | InvalidDateExpression,
+    ):
+        return 2
+    if isinstance(exc, ContentSearchError):
+        if str(exc).startswith("binary file not searchable"):
+            return 3
+        return 2
+    return 3
 
 
 def _needs_deferred_limit(display: CliDisplayOptions, search_limit: int | None) -> bool:
@@ -172,12 +194,10 @@ def run(args: argparse.Namespace, stdout: TextIO | None = None, stderr: TextIO |
             print(plain_formatter.format_summary(session.stats), file=stderr)
 
         return 0 if matched_files > 0 else 1
-    except QuerySyntaxError as exc:
-        print(f"query error: {exc}", file=stderr)
-        return 2
     except FileSearchError as exc:
-        print(f"error: {exc}", file=stderr)
-        return 2
+        prefix = "query error: " if isinstance(exc, QuerySyntaxError) else "error: "
+        emit_stderr(f"{prefix}{exc}", stderr)
+        return _error_exit_code(exc)
 
 
 def main(argv: list[str] | None = None) -> int:
