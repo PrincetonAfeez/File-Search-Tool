@@ -52,6 +52,7 @@ source = ["file_search_tool"]
 [tool.coverage.report]
 show_missing = true
 skip_empty = true
+fail_under = 99
 
 [tool.ruff]
 target-version = "py311"
