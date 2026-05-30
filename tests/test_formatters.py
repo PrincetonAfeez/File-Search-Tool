@@ -1,10 +1,23 @@
 """Test the formatters."""
 
+import json
 from pathlib import Path
 
 from file_search_tool.formatters import json as json_formatter
 from file_search_tool.formatters import plain, tree
 from file_search_tool.models import SearchResult, SearchStats
+
+JSON_RESULT_KEYS = {
+    "path",
+    "relative_path",
+    "type",
+    "size",
+    "mtime",
+    "match_kind",
+    "line_number",
+    "line_text",
+    "matched_text",
+}
 
 
 def result(path: Path, root: Path, *, line_number=None):
@@ -40,6 +53,19 @@ def test_json_formatter_outputs_array(tmp_path: Path):
     path.write_text("", encoding="utf-8")
 
     assert '"relative_path": "app.py"' in json_formatter.format_results([result(path, tmp_path)])
+
+
+def test_json_formatter_emits_stable_object_keys(tmp_path: Path):
+    path = tmp_path / "app.py"
+    path.write_text("TODO\n", encoding="utf-8")
+
+    path_payload = json.loads(json_formatter.format_results([result(path, tmp_path)]))[0]
+    content_payload = json.loads(json_formatter.format_results([result(path, tmp_path, line_number=1)]))[0]
+
+    assert set(path_payload.keys()) == JSON_RESULT_KEYS
+    assert set(content_payload.keys()) == JSON_RESULT_KEYS
+    assert path_payload["match_kind"] == "path"
+    assert content_payload["match_kind"] == "content"
 
 
 def test_tree_formatter_groups_by_directory(tmp_path: Path):
