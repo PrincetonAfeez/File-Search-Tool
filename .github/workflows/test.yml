@@ -16,7 +16,9 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
       - name: Install package and test dependencies
-        run: python -m pip install -e ".[dev]"
+        run: |
+          python -m pip install -r requirements-dev.lock
+          python -m pip install -e .
       - name: Lint with ruff
         run: ruff check file_search_tool tests
       - name: Type-check library with mypy
@@ -25,3 +27,5 @@ jobs:
         run: mypy tests --disable-error-code=no-untyped-def --disable-error-code=no-untyped-call
       - name: Run tests with coverage
         run: python -m pytest --cov=file_search_tool --cov-report=term-missing -q
+      - name: Enforce coverage threshold
+        run: python -m coverage report --fail-under=99
