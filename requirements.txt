@@ -1,6 +1,9 @@
-# Development dependencies for File Search Tool.
-# Prefer installing editable with dev extras:
-#   python -m pip install -e ".[dev]"
+# Loose development dependency lower bounds (human-readable).
+# For reproducible installs, prefer the locked list instead:
+#   python -m pip install -r requirements-dev.lock
+#
+# Regenerate the lockfile with:
+#   pip-compile pyproject.toml --extra dev -o requirements-dev.lock
 
 pytest>=8
 pytest-cov>=5
